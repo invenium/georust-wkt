@@ -17,9 +17,10 @@ use crate::types::linestring::LineString;
 use crate::{FromTokens, Geometry, WktNum};
 use std::fmt;
 use std::str::FromStr;
+use abi_stable::std_types::RVec;
 
 #[derive(Clone, Debug, Default)]
-pub struct MultiLineString<T: WktNum>(pub Vec<LineString<T>>);
+pub struct MultiLineString<T: WktNum>(pub RVec<LineString<T>>);
 
 impl<T> MultiLineString<T>
 where
@@ -74,6 +75,7 @@ mod tests {
     use crate::types::Coord;
     use crate::{Geometry, Wkt};
     use std::str::FromStr;
+    use abi_stable::rvec;
 
     #[test]
     fn basic_multilinestring() {
@@ -89,15 +91,15 @@ mod tests {
 
     #[test]
     fn write_empty_multilinestring() {
-        let multilinestring: MultiLineString<f64> = MultiLineString(vec![]);
+        let multilinestring: MultiLineString<f64> = MultiLineString(rvec![]);
 
         assert_eq!("MULTILINESTRING EMPTY", format!("{}", multilinestring));
     }
 
     #[test]
     fn write_multilinestring() {
-        let multilinestring = MultiLineString(vec![
-            LineString(vec![
+        let multilinestring = MultiLineString(rvec![
+            LineString(rvec![
                 Coord {
                     x: 10.1,
                     y: 20.2,
@@ -111,7 +113,7 @@ mod tests {
                     m: None,
                 },
             ]),
-            LineString(vec![
+            LineString(rvec![
                 Coord {
                     x: 50.5,
                     y: 60.6,

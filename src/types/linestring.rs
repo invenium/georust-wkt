@@ -17,9 +17,10 @@ use crate::types::coord::Coord;
 use crate::{FromTokens, Geometry, WktNum};
 use std::fmt;
 use std::str::FromStr;
+use abi_stable::std_types::RVec;
 
 #[derive(Clone, Debug, Default)]
-pub struct LineString<T: WktNum>(pub Vec<Coord<T>>);
+pub struct LineString<T: WktNum>(pub RVec<Coord<T>>);
 
 impl<T> LineString<T>
 where
@@ -65,10 +66,11 @@ mod tests {
     use super::{Coord, LineString};
     use crate::{Geometry, Wkt};
     use std::str::FromStr;
+    use abi_stable::rvec;
 
     #[test]
     fn basic_linestring() {
-        let wkt = Wkt::from_str("LINESTRING (10 -20, -0 -0.5)").ok().unwrap();
+        let wkt: Wkt<f64> = Wkt::from_str("LINESTRING (10 -20, -0 -0.5)").ok().unwrap();
         let coords = match wkt.item {
             Geometry::LineString(LineString(coords)) => coords,
             _ => unreachable!(),
@@ -88,14 +90,14 @@ mod tests {
 
     #[test]
     fn write_empty_linestring() {
-        let linestring: LineString<f64> = LineString(vec![]);
+        let linestring: LineString<f64> = LineString(rvec![]);
 
         assert_eq!("LINESTRING EMPTY", format!("{}", linestring));
     }
 
     #[test]
     fn write_linestring() {
-        let linestring = LineString(vec![
+        let linestring = LineString(rvec![
             Coord {
                 x: 10.1,
                 y: 20.2,

@@ -18,6 +18,9 @@ use std::iter::Peekable;
 use std::marker::PhantomData;
 use std::str;
 
+#[cfg(test)]
+use abi_stable::rvec;
+
 #[derive(Debug, PartialEq)]
 pub enum Token<T>
 where
@@ -135,7 +138,7 @@ fn test_tokenizer_empty() {
     let test_str = "";
     let tokens: Result<Vec<Token<f64>>, _> = Tokens::from_str(test_str).collect();
     let tokens = tokens.unwrap();
-    assert_eq!(tokens, vec![]);
+    assert_eq!(tokens, rvec![]);
 }
 
 #[test]
@@ -143,7 +146,7 @@ fn test_tokenizer_1word() {
     let test_str = "hello";
     let tokens: Result<Vec<Token<f64>>, _> = Tokens::from_str(test_str).collect();
     let tokens = tokens.unwrap();
-    assert_eq!(tokens, vec![Token::Word("hello".to_string())]);
+    assert_eq!(tokens, rvec![Token::Word("hello".to_string())]);
 }
 
 #[test]
@@ -153,7 +156,7 @@ fn test_tokenizer_2words() {
     let tokens = tokens.unwrap();
     assert_eq!(
         tokens,
-        vec![
+        rvec![
             Token::Word("hello".to_string()),
             Token::Word("world".to_string()),
         ]
@@ -165,7 +168,7 @@ fn test_tokenizer_1number() {
     let test_str = "4.2";
     let tokens: Result<Vec<Token<f64>>, _> = Tokens::from_str(test_str).collect();
     let tokens = tokens.unwrap();
-    assert_eq!(tokens, vec![Token::Number(4.2)]);
+    assert_eq!(tokens, rvec![Token::Number(4.2)]);
 }
 
 #[test]
@@ -173,7 +176,7 @@ fn test_tokenizer_1number_plus() {
     let test_str = "+4.2";
     let tokens: Result<Vec<Token<f64>>, _> = Tokens::from_str(test_str).collect();
     let tokens = tokens.unwrap();
-    assert_eq!(tokens, vec![Token::Number(4.2)]);
+    assert_eq!(tokens, rvec![Token::Number(4.2)]);
 }
 
 #[test]
@@ -192,7 +195,7 @@ fn test_tokenizer_not_a_number() {
     let test_str = "¾"; // A number according to char.is_numeric()
     let tokens: Result<Vec<Token<f64>>, _> = Tokens::from_str(test_str).collect();
     let tokens = tokens.unwrap();
-    assert_eq!(tokens, vec![Token::Word("¾".to_owned())]);
+    assert_eq!(tokens, rvec![Token::Word("¾".to_owned())]);
 }
 
 #[test]
@@ -200,7 +203,7 @@ fn test_tokenizer_2numbers() {
     let test_str = ".4 -2";
     let tokens: Result<Vec<Token<f64>>, _> = Tokens::from_str(test_str).collect();
     let tokens = tokens.unwrap();
-    assert_eq!(tokens, vec![Token::Number(0.4), Token::Number(-2.0)]);
+    assert_eq!(tokens, rvec![Token::Number(0.4), Token::Number(-2.0)]);
 }
 
 #[test]
@@ -232,7 +235,7 @@ fn test_tokenizer_point() {
     let tokens = tokens.unwrap();
     assert_eq!(
         tokens,
-        vec![
+        rvec![
             Token::Word("POINT".to_string()),
             Token::ParenOpen,
             Token::Number(10.0),

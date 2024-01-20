@@ -17,9 +17,10 @@ use crate::types::point::Point;
 use crate::{FromTokens, Geometry, WktNum};
 use std::fmt;
 use std::str::FromStr;
+use abi_stable::std_types::RVec;
 
 #[derive(Clone, Debug, Default)]
-pub struct MultiPoint<T: WktNum>(pub Vec<Point<T>>);
+pub struct MultiPoint<T: WktNum>(pub RVec<Point<T>>);
 
 impl<T> MultiPoint<T>
 where
@@ -70,6 +71,7 @@ mod tests {
     use crate::types::Coord;
     use crate::{Geometry, Wkt};
     use std::str::FromStr;
+    use abi_stable::rvec;
 
     #[test]
     fn basic_multipoint() {
@@ -113,14 +115,14 @@ mod tests {
 
     #[test]
     fn write_empty_multipoint() {
-        let multipoint: MultiPoint<f64> = MultiPoint(vec![]);
+        let multipoint: MultiPoint<f64> = MultiPoint(rvec![]);
 
         assert_eq!("MULTIPOINT EMPTY", format!("{}", multipoint));
     }
 
     #[test]
     fn write_multipoint() {
-        let multipoint = MultiPoint(vec![
+        let multipoint = MultiPoint(rvec![
             Point(Some(Coord {
                 x: 10.1,
                 y: 20.2,

@@ -80,6 +80,7 @@
 use std::default::Default;
 use std::fmt;
 use std::str::FromStr;
+use abi_stable::std_types::RVec;
 
 use num_traits::{Float, Num, NumCast};
 
@@ -295,11 +296,11 @@ where
         }
     }
 
-    fn comma_many<F>(f: F, tokens: &mut PeekableTokens<T>) -> Result<Vec<Self>, &'static str>
+    fn comma_many<F>(f: F, tokens: &mut PeekableTokens<T>) -> Result<RVec<Self>, &'static str>
     where
         F: Fn(&mut PeekableTokens<T>) -> Result<Self, &'static str>,
     {
-        let mut items = Vec::new();
+        let mut items = RVec::new();
 
         let item = f(tokens)?;
         items.push(item);

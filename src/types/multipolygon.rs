@@ -17,9 +17,10 @@ use crate::types::polygon::Polygon;
 use crate::{FromTokens, Geometry, WktNum};
 use std::fmt;
 use std::str::FromStr;
+use abi_stable::std_types::RVec;
 
 #[derive(Clone, Debug, Default)]
-pub struct MultiPolygon<T: WktNum>(pub Vec<Polygon<T>>);
+pub struct MultiPolygon<T: WktNum>(pub RVec<Polygon<T>>);
 
 impl<T> MultiPolygon<T>
 where
@@ -79,6 +80,7 @@ mod tests {
     use crate::types::{Coord, LineString};
     use crate::{Geometry, Wkt};
     use std::str::FromStr;
+    use abi_stable::rvec;
 
     #[test]
     fn basic_multipolygon() {
@@ -94,16 +96,16 @@ mod tests {
 
     #[test]
     fn write_empty_multipolygon() {
-        let multipolygon: MultiPolygon<f64> = MultiPolygon(vec![]);
+        let multipolygon: MultiPolygon<f64> = MultiPolygon(rvec![]);
 
         assert_eq!("MULTIPOLYGON EMPTY", format!("{}", multipolygon));
     }
 
     #[test]
     fn write_multipolygon() {
-        let multipolygon = MultiPolygon(vec![
-            Polygon(vec![
-                LineString(vec![
+        let multipolygon = MultiPolygon(rvec![
+            Polygon(rvec![
+                LineString(rvec![
                     Coord {
                         x: 0.,
                         y: 0.,
@@ -129,7 +131,7 @@ mod tests {
                         m: None,
                     },
                 ]),
-                LineString(vec![
+                LineString(rvec![
                     Coord {
                         x: 5.,
                         y: 5.,
@@ -156,7 +158,7 @@ mod tests {
                     },
                 ]),
             ]),
-            Polygon(vec![LineString(vec![
+            Polygon(rvec![LineString(rvec![
                 Coord {
                     x: 40.,
                     y: 40.,

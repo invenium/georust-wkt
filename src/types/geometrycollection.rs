@@ -16,9 +16,10 @@ use crate::tokenizer::{PeekableTokens, Token};
 use crate::{FromTokens, Geometry, WktNum};
 use std::fmt;
 use std::str::FromStr;
+use abi_stable::std_types::RVec;
 
 #[derive(Clone, Debug, Default)]
-pub struct GeometryCollection<T: WktNum>(pub Vec<Geometry<T>>);
+pub struct GeometryCollection<T: WktNum>(pub RVec<Geometry<T>>);
 
 impl<T> GeometryCollection<T>
 where
@@ -54,7 +55,7 @@ where
     T: WktNum + FromStr + Default,
 {
     fn from_tokens(tokens: &mut PeekableTokens<T>) -> Result<Self, &'static str> {
-        let mut items = Vec::new();
+        let mut items = RVec::new();
 
         let word = match tokens.next().transpose()? {
             Some(Token::Word(w)) => w,
@@ -86,6 +87,7 @@ mod tests {
     use crate::types::*;
     use crate::{Geometry, Wkt};
     use std::str::FromStr;
+    use abi_stable::rvec;
 
     #[test]
     fn basic_geometrycollection() {
@@ -113,7 +115,7 @@ mod tests {
 
     #[test]
     fn write_empty_geometry_collection() {
-        let geometry_collection: GeometryCollection<f64> = GeometryCollection(vec![]);
+        let geometry_collection: GeometryCollection<f64> = GeometryCollection(rvec![]);
 
         assert_eq!(
             "GEOMETRYCOLLECTION EMPTY",
@@ -130,7 +132,7 @@ mod tests {
             m: None,
         })));
 
-        let multipoint = Geometry::MultiPoint(MultiPoint(vec![
+        let multipoint = Geometry::MultiPoint(MultiPoint(rvec![
             Point(Some(Coord {
                 x: 10.1,
                 y: 20.2,
@@ -145,7 +147,7 @@ mod tests {
             })),
         ]));
 
-        let linestring = Geometry::LineString(LineString(vec![
+        let linestring = Geometry::LineString(LineString(rvec![
             Coord {
                 x: 10.,
                 y: 20.,
@@ -160,7 +162,7 @@ mod tests {
             },
         ]));
 
-        let polygon = Geometry::Polygon(Polygon(vec![LineString(vec![
+        let polygon = Geometry::Polygon(Polygon(rvec![LineString(rvec![
             Coord {
                 x: 0.,
                 y: 0.,
@@ -187,8 +189,8 @@ mod tests {
             },
         ])]));
 
-        let multilinestring = Geometry::MultiLineString(MultiLineString(vec![
-            LineString(vec![
+        let multilinestring = Geometry::MultiLineString(MultiLineString(rvec![
+            LineString(rvec![
                 Coord {
                     x: 10.1,
                     y: 20.2,
@@ -202,7 +204,7 @@ mod tests {
                     m: None,
                 },
             ]),
-            LineString(vec![
+            LineString(rvec![
                 Coord {
                     x: 50.5,
                     y: 60.6,
@@ -218,8 +220,8 @@ mod tests {
             ]),
         ]));
 
-        let multipolygon = Geometry::MultiPolygon(MultiPolygon(vec![
-            Polygon(vec![LineString(vec![
+        let multipolygon = Geometry::MultiPolygon(MultiPolygon(rvec![
+            Polygon(rvec![LineString(rvec![
                 Coord {
                     x: 0.,
                     y: 0.,
@@ -245,7 +247,7 @@ mod tests {
                     m: None,
                 },
             ])]),
-            Polygon(vec![LineString(vec![
+            Polygon(rvec![LineString(rvec![
                 Coord {
                     x: 40.,
                     y: 40.,
@@ -273,7 +275,7 @@ mod tests {
             ])]),
         ]));
 
-        let geometrycollection = GeometryCollection(vec![
+        let geometrycollection = GeometryCollection(rvec![
             point,
             multipoint,
             linestring,
