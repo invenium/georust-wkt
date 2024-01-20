@@ -40,7 +40,7 @@ pub mod geo_types;
 ///     pub geometry: geo_types::Geometry<f64>,
 ///     pub name: String,
 /// }
-/// let my_type: Vec<MyGeomRecord> = serde_json::from_str(json).unwrap();
+/// let my_type: RVec<MyGeomRecord> = serde_json::from_str(json).unwrap();
 /// assert!(matches!(my_type[0].geometry, geo_types::Geometry::Point(_)));
 /// assert!(matches!(my_type[1].geometry, geo_types::Geometry::LineString(_)));
 ///
@@ -58,7 +58,7 @@ pub mod geo_types;
 ///     pub name: String,
 /// }
 ///
-/// let my_type: Vec<MyPointRecord> = serde_json::from_str(json).unwrap();
+/// let my_type: RVec<MyPointRecord> = serde_json::from_str(json).unwrap();
 /// assert_eq!(my_type[0].geometry.x(), 3.14);
 /// assert_eq!(my_type[1].geometry.y(), 23.0);
 /// ```

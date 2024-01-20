@@ -17,9 +17,10 @@ use crate::types::linestring::LineString;
 use crate::{FromTokens, Geometry, WktNum};
 use std::fmt;
 use std::str::FromStr;
+use abi_stable::std_types::RVec;
 
 #[derive(Clone, Debug, Default)]
-pub struct Polygon<T: WktNum>(pub Vec<LineString<T>>);
+pub struct Polygon<T: WktNum>(pub RVec<LineString<T>>);
 
 impl<T> Polygon<T>
 where
@@ -74,6 +75,7 @@ mod tests {
     use crate::types::Coord;
     use crate::{Geometry, Wkt};
     use std::str::FromStr;
+    use abi_stable::rvec;
 
     #[test]
     fn basic_polygon() {
@@ -89,15 +91,15 @@ mod tests {
 
     #[test]
     fn write_empty_polygon() {
-        let polygon: Polygon<f64> = Polygon(vec![]);
+        let polygon: Polygon<f64> = Polygon(rvec![]);
 
         assert_eq!("POLYGON EMPTY", format!("{}", polygon));
     }
 
     #[test]
     fn write_polygon() {
-        let polygon = Polygon(vec![
-            LineString(vec![
+        let polygon = Polygon(rvec![
+            LineString(rvec![
                 Coord {
                     x: 0.,
                     y: 0.,
@@ -123,7 +125,7 @@ mod tests {
                     m: None,
                 },
             ]),
-            LineString(vec![
+            LineString(rvec![
                 Coord {
                     x: 5.,
                     y: 5.,

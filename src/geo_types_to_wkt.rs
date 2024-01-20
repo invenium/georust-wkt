@@ -1,3 +1,5 @@
+use abi_stable::rvec;
+use abi_stable::std_types::RVec;
 use geo_types::CoordNum;
 
 use crate::types::{
@@ -117,10 +119,11 @@ where
 
 /// # Examples
 /// ```
+/// use abi_stable::rvec;
 /// use geo_types::{point, MultiPoint};
 /// use wkt::ToWkt;
 ///
-/// let multi_point: MultiPoint<f64> = MultiPoint::new(vec![point!(x: 0., y: 0.), point!(x: 4., y: 0.), point!(x: 2., y: 4.)]);
+/// let multi_point: MultiPoint<f64> = MultiPoint::new(rvec![point!(x: 0., y: 0.), point!(x: 4., y: 0.), point!(x: 2., y: 4.)]);
 ///
 /// assert_eq!(multi_point.wkt_string(), "MULTIPOINT((0 0),(4 0),(2 4))");
 /// ```
@@ -137,12 +140,13 @@ where
 
 /// # Examples
 /// ```
+/// use abi_stable::rvec;
 /// use geo_types::{line_string, LineString, MultiLineString};
 /// use wkt::ToWkt;
 ///
 /// let line_string_1: LineString<f64> = line_string![(x: 1., y: 2.), (x: 3., y: 4.), (x: 5., y: 6.)];
 /// let line_string_2: LineString<f64> = line_string![(x: 7., y: 8.), (x: 9., y: 0.)];
-/// let multi_line_string: MultiLineString<f64> = MultiLineString::new(vec![line_string_1, line_string_2]);
+/// let multi_line_string: MultiLineString<f64> = MultiLineString::new(rvec![line_string_1, line_string_2]);
 ///
 /// assert_eq!(multi_line_string.wkt_string(), "MULTILINESTRING((1 2,3 4,5 6),(7 8,9 0))");
 /// ```
@@ -159,6 +163,7 @@ where
 
 /// # Examples
 /// ```
+/// use abi_stable::rvec;
 /// use geo_types::{polygon, Polygon, MultiPolygon};
 /// use wkt::ToWkt;
 ///
@@ -166,7 +171,7 @@ where
 /// let polygon_1: Polygon<f64> = polygon![(x: 0., y: 0.), (x: 4., y: 0.), (x: 2., y: 4.), (x: 0., y: 0.)];
 /// // square
 /// let polygon_2: Polygon<f64> = polygon![(x: 4., y: 4.), (x: 8., y: 4.), (x: 8., y: 8.), (x: 4., y: 8.), (x: 4., y: 4.)];
-/// let multi_polygon: MultiPolygon<f64> = MultiPolygon::new(vec![polygon_1, polygon_2]);
+/// let multi_polygon: MultiPolygon<f64> = MultiPolygon::new(rvec![polygon_1, polygon_2]);
 ///
 /// assert_eq!(multi_polygon.wkt_string(), "MULTIPOLYGON(((0 0,4 0,2 4,0 0)),((4 4,8 4,8 8,4 8,4 4)))");
 /// ```
@@ -183,12 +188,13 @@ where
 
 /// # Examples
 /// ```
+/// use abi_stable::rvec;
 /// use geo_types::{line_string, LineString, polygon, Polygon, GeometryCollection};
 /// use wkt::ToWkt;
 ///
 /// let polygon: Polygon<f64> = polygon![(x: 0., y: 0.), (x: 4., y: 0.), (x: 2., y: 4.), (x: 0., y: 0.)];
 /// let line_string: LineString<f64> = line_string![(x: 1., y: 2.), (x: 3., y: 4.), (x: 5., y: 6.)];
-/// let geometry_collection: GeometryCollection<f64> = GeometryCollection::new_from(vec![polygon.into(), line_string.into()]);
+/// let geometry_collection: GeometryCollection<f64> = GeometryCollection::new_from(rvec![polygon.into(), line_string.into()]);
 ///
 /// assert_eq!(geometry_collection.wkt_string(), "GEOMETRYCOLLECTION(POLYGON((0 0,4 0,2 4,0 0)),LINESTRING(1 2,3 4,5 6))");
 /// ```
@@ -243,7 +249,7 @@ where
     }
 }
 
-fn g_point_to_w_coord<T>(g_point: &geo_types::Coordinate<T>) -> Coord<T>
+fn g_point_to_w_coord<T>(g_point: &geo_types::Coord<T>) -> Coord<T>
 where
     T: CoordNum,
 {
@@ -263,14 +269,14 @@ where
     Point(Some(coord))
 }
 
-fn g_points_to_w_coords<T>(g_points: &[geo_types::Coordinate<T>]) -> Vec<Coord<T>>
+fn g_points_to_w_coords<T>(g_points: &[geo_types::Coord<T>]) -> RVec<Coord<T>>
 where
     T: CoordNum,
 {
     g_points.iter().map(g_point_to_w_coord).collect()
 }
 
-fn g_points_to_w_points<T>(g_points: &[geo_types::Point<T>]) -> Vec<Point<T>>
+fn g_points_to_w_points<T>(g_points: &[geo_types::Point<T>]) -> RVec<Point<T>>
 where
     T: CoordNum,
 {
@@ -297,7 +303,7 @@ where
     g_points_to_w_linestring(g_points)
 }
 
-fn g_points_to_w_linestring<T>(g_coords: &[geo_types::Coordinate<T>]) -> LineString<T>
+fn g_points_to_w_linestring<T>(g_coords: &[geo_types::Coord<T>]) -> LineString<T>
 where
     T: CoordNum,
 {
@@ -305,11 +311,11 @@ where
     LineString(w_coords)
 }
 
-fn g_lines_to_w_lines<T>(g_lines: &[geo_types::LineString<T>]) -> Vec<LineString<T>>
+fn g_lines_to_w_lines<T>(g_lines: &[geo_types::LineString<T>]) -> RVec<LineString<T>>
 where
     T: CoordNum,
 {
-    let mut w_lines = vec![];
+    let mut w_lines = rvec![];
     for g_line in g_lines {
         let &geo_types::LineString(ref g_points) = g_line;
         w_lines.push(g_points_to_w_linestring(g_points));
@@ -339,7 +345,7 @@ where
 {
     let outer_line = g_polygon.exterior();
     let inner_lines = g_polygon.interiors();
-    let mut poly_lines = vec![];
+    let mut poly_lines = rvec![];
 
     // Outer
     let &geo_types::LineString(ref outer_points) = outer_line;
@@ -372,11 +378,11 @@ where
     MultiLineString(w_lines)
 }
 
-fn g_polygons_to_w_polygons<T>(g_polygons: &[geo_types::Polygon<T>]) -> Vec<Polygon<T>>
+fn g_polygons_to_w_polygons<T>(g_polygons: &[geo_types::Polygon<T>]) -> RVec<Polygon<T>>
 where
     T: CoordNum,
 {
-    let mut w_polygons = vec![];
+    let mut w_polygons = rvec![];
     for g_polygon in g_polygons {
         w_polygons.push(g_polygon_to_w_polygon(g_polygon));
     }
@@ -397,7 +403,7 @@ where
     T: CoordNum,
 {
     let &geo_types::GeometryCollection(ref g_geoms) = g_geocol;
-    let mut w_geoms = vec![];
+    let mut w_geoms = rvec![];
     for g_geom in g_geoms {
         let w_geom = g_geom_to_w_geom(g_geom);
         w_geoms.push(w_geom);

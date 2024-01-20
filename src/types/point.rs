@@ -73,7 +73,7 @@ mod tests {
 
     #[test]
     fn basic_point() {
-        let wkt = Wkt::from_str("POINT (10 -20)").ok().unwrap();
+        let wkt:  Wkt<f64> = Wkt::from_str("POINT (10 -20)").ok().unwrap();
         let coord = match wkt.item {
             Geometry::Point(Point(Some(coord))) => coord,
             _ => unreachable!(),
